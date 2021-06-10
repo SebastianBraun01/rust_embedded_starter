@@ -1,0 +1,18 @@
+[package]
+name = "rust_embedded_starter"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+rustuino = { git = "https://github.com/SebastianBraun01/rustuino", branch = "aaron_pull" }
+
+# this lets you use `cargo fix`!
+[[bin]]
+name = "rust_embedded_starter"
+test = false
+bench = false
+
+[profile.release]
+codegen-units = 1 # longer build times but better optimizations
+debug = true      # enable debug symbols in release as they don't increase the size on flash
+lto = true        # enable link time optimizations for better performance
