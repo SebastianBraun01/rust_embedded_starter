@@ -1,31 +1,26 @@
 #![no_std]
 #![no_main]
 
-use rustuino::{Mode, entry, pin_mode};
-use rustuino::gpio::{GetAsOutput, OutputPin, PB0};
+use rustuino::{entry, gpio::*};
 
 #[entry]
 fn main() -> ! {
-    pin_mode(PA2, Mode::Input);
+  let mut pin = PB1::get_as_output();
 
-    let peri = stm32f4::stm32f446::Peripherals::take().unwrap();
+  set_value(&mut pin, true);
+  set_speed(&mut pin, rustuino::Speed::Low);
 
-    let mut pin = PB0::get_as_output();
+	let pin = into_input(pin);
 
-    pin.set_value(true);
-    pin.set_speed(rustuino::Speed::Low);
+  let _value = read_value(&pin);
 
-    let pin = pin.into_input();
+  // Cannot write to input pin!
+  // set_value(&mut pin, true);
 
-    let value = pin.read_value();
+  let mut pin = into_output(pin);
 
-    // Cannot write to input pin!
-    // pin.set_value(true);
-
-    let mut pin = pin.into_output();
-
-    loop {
-        pin.set_value(false);
-        pin.set_value(true);
-    }
+  loop {
+    set_value(&mut pin, false);
+    set_value(&mut pin, true);
+  }
 }
