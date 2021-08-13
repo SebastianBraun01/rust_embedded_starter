@@ -2,10 +2,9 @@
   "version": "2.0.0",
   "tasks": [
         {
-            "label": "Cargo Check bin",
-            "type": "process",
-            "command": "cargo",
-            "args": ["check"],
+            "label": "cargo: build",
+            "type": "cargo",
+            "command": "build",
             "problemMatcher": ["$rustc"],
             "group": {
                 "kind": "build",
@@ -13,36 +12,18 @@
             }
         },
         {
-            "label": "Cargo Check lib",
-            "type": "process",
-            "command": "cargo",
-            "args": ["check", "--lib"],
+            "label": "cargo: flash",
+            "type": "cargo",
+            "command": "embed",
             "problemMatcher": ["$rustc"],
             "group": "build"
         },
         {
-            "label": "Cargo Build bin",
-            "type": "process",
-            "command": "cargo",
-            "args": ["build"],
+            "label": "cargo: clean",
+            "type": "cargo",
+            "command": "clean",
             "problemMatcher": ["$rustc"],
             "group": "build"
-        },
-        {
-            "label": "Cargo Build lib",
-            "type": "process",
-            "command": "cargo",
-            "args": ["build", "--lib"],
-            "problemMatcher": ["$rustc"],
-            "group": "build"
-        },
-        {
-            "label": "Cargo Clean",
-            "type": "process",
-            "command": "cargo",
-            "args": ["clean"],
-            "problemMatcher": ["$rustc"],
-            "group": "build"
-        },
+        }
     ]
 }

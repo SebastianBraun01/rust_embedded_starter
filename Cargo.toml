@@ -4,7 +4,12 @@ version = "0.1.0"
 edition = "2018"
 
 [dependencies]
-rustuino = { git = "https://github.com/SebastianBraun01/rustuino", branch = "aaron_pull" }
+rustuino = { git = "https://github.com/SebastianBraun01/rustuino", branch = "master" }
+rtt-target = { version = "0.3.1", features = ["cortex-m"] }
+
+[dependencies.stm32f4]
+version = "0.13.0"
+features = ["stm32f446", "rt"]
 
 # this lets you use `cargo fix`!
 [[bin]]
