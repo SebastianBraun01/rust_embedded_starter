@@ -5,6 +5,7 @@ edition = "2018"
 
 [dependencies]
 rustuino = { git = "https://github.com/SebastianBraun01/rustuino", branch = "master" }
+cortex-m-rt = "0.6.15"
 
 [dependencies.stm32f4]
 version = "0.13.0"
@@ -20,3 +21,12 @@ bench = false
 codegen-units = 1 # longer build times but better optimizations
 debug = true      # enable debug symbols in release as they don't increase the size on flash
 lto = true        # enable link time optimizations for better performance
+
+[[example]]
+name = "mct_1_lauflicht"
+
+[[example]]
+name = "mct_2_uart"
+
+[[example]]
+name = "mct_3_stepper"

@@ -1,75 +1,104 @@
-#![no_std]
+#![allow(dead_code)]
 
 use rustuino::*;
 
-#define schrittmotor_steps 4096
+#[derive(PartialEq, Eq)]
+pub enum Stepmode {
+  StepmodeNone,
+  StepmodeFwd,
+  StepmodeBwd,
+  StepmodePos,
+  StepmodeRef
+}
+ 
+pub static mut STEPDIR: bool = false;                         // Richtung des Schrittmotors
+pub static mut AKT_POS: u16 = 0;		    					          	// aktuelle Position des Schrittmotors
+pub static mut ZIEL_POS: u16 = 0;   							          	// Zielposition des Schrittmotors
+pub static mut STEPMODE: Stepmode = Stepmode::StepmodeNone;	  // Modus des Schrittmotors
 
-int stepdir = 0;  						// Richtung des Schrittmotors
-int akt_pos=0;								// aktuelle Position des Schrittmotors
-int ziel_pos=0;								// Zielposition des Schrittmotors
-int stepmode=STEPMODE_NONE;		// Modus des Schrittmotors
+static mut PATTERN_POS: u16 = 0;
 
-
-pub fn InitSysTick(load: u32) {
+pub fn init_systick(load: u32) {
   // initialisiert SysTick mit load und startet ihn
-  (*SYSTICK_PTR).load.write(|w| w.bits(load));
-  (*SYSTICK_PTR).ctrl.modify(|_, w| {
-    w.interrupt().enabled();
-    w.clocksource().enabled();
-    w.enable().enabled()
+  let peripherals;
+	unsafe {peripherals = stm32f4::stm32f446::Peripherals::steal();}
+	let systick = &peripherals.STK;
+
+  systick.load.write(|w| unsafe {w.reload().bits(load)});
+  systick.ctrl.modify(|_, w| {
+    w.tickint().set_bit();
+    w.enable().set_bit()
   });
 }
-
-
-pub fn InitStepper()  {
+ 
+pub fn init_stepper() {
   // initialisiert Schrittmotorausgänge GPIOB0...3 und Referenzeingang GPIOB4
-  (*RCC_PTR).ahb1enr.modify(|_, w| w.gpioben().enabled());
-  (*GPIOB_PTR).moder.modify(|r, w| w.bits(r.bits() & 0xFFFFF000 | 0x00000055));
+  let peripherals;
+	unsafe {peripherals = stm32f4::stm32f446::Peripherals::steal();}
+	let rcc = &peripherals.RCC;
+  let gpiob = &peripherals.GPIOB;
 
-	InitSysTick((16000000 / schrittmotor_steps) * 6);						// 6s für eine Umdrehung
+  rcc.ahb1enr.modify(|_, w| w.gpioben().enabled());
+  gpiob.moder.modify(|_, w| {
+    w.moder0().output();
+    w.moder1().output();
+    w.moder2().output();
+    w.moder3().output()
+  });
+
+  init_systick((16000000 / 4096) * 6);    // 6s für eine Umdrehung
 }
 
-pub fn Step_Out(step_pattern: u32) {
+pub fn step_out(step_pattern: u16) {
   // gibt das Schrittmotormuster step_pattern an Motor aus
-	let pattern_map: Vec<u8, 8> = Vec::new();
-  pattern_map = {0x0001, 0x0003, 0x0002, 0x0006, 0x0004, 0x000C, 0x0008, 0x0009};
+  let peripherals;
+	unsafe {peripherals = stm32f4::stm32f446::Peripherals::steal();}
+  let gpiob = &peripherals.GPIOB;
 
-  (*GPIOB_PTR).odr.modify(|r, w| w.bits(r.bits() & 0xFFF0 | pattern_map[step_pattern]));	
+  let pattern_map: [u32; 8] = [0x0001, 0x0003, 0x0002, 0x0006, 0x0004, 0x000C, 0x0008, 0x0009];
+  // let pattern_map: [u16; 8] = [0x0009, 0x0008, 0x000C, 0x0004, 0x0006, 0x0002, 0x0003, 0x0001];
+
+  gpiob.odr.reset();
+  gpiob.odr.write(|w| unsafe {w.bits(pattern_map[step_pattern as usize])});
 }
-
-
+ 
+ 
+/*----------------------------------------------------------------------------
+  Interrupt-Handler SysTick
+ *----------------------------------------------------------------------------*/
+#[allow(non_snake_case)]
 #[exception]
 fn SysTick() {
-	static pattern_pos: u32 = 0;
-
-	// Aufgabe 3.3 a)
-	if stepmode == STEPMODE_NONE {
-		// 0 = rechtslauf, 1 = linkslauf
-		if stepdir == 1 {
-			Step_Out(pattern_pos);
-			if pattern_pos < 7 {pattern_pos += 1;}
-			else {pattern_pos = 0;}
-		}
-		else {
-			Step_Out(pattern_pos);
-			if pattern_pos > 0 {pattern_pos -= 1;}
-			else {pattern_pos = 7;}
-		}
-	}
-	// Aufgabe 3.3 b)
-	else if stepmode == STEPMODE_POS {
-		// ziel > akt = rechtslauf, ziel < akt = linkslauf
-		if ziel_pos < akt_pos {
-			Step_Out(pattern_pos);
-			if pattern_pos < 7 {pattern_pos += 1;}
-			else {pattern_pos = 0;}
-			akt_pos -= 1;
-		}
-		else if ziel_pos > akt_pos {
-			Step_Out(pattern_pos);
-			if pattern_pos > 0 {pattern_pos -= 1;}
-			else {pattern_pos = 7;}
-			akt_pos += 1;
-		}
-	}
+  unsafe {
+    // Aufgabe 3.3 a)
+    if STEPMODE == Stepmode::StepmodeNone {
+      // false = rechtslauf, true = linkslauf
+      if STEPDIR == true {
+        step_out(PATTERN_POS);
+        if PATTERN_POS < 7 {PATTERN_POS += 1;}
+        else {PATTERN_POS = 0;}
+      }
+      else {
+        step_out(PATTERN_POS);
+        if PATTERN_POS > 0 {PATTERN_POS -= 1;}
+        else {PATTERN_POS = 7;}
+      }
+    }
+    // Aufgabe 3.3 b)
+    else if STEPMODE == Stepmode::StepmodePos {
+      // ziel > akt = rechtslauf, ziel < akt = linkslauf
+      if ZIEL_POS < AKT_POS {
+        step_out(PATTERN_POS);
+        if PATTERN_POS < 7 {PATTERN_POS += 1;}
+        else {PATTERN_POS = 0;}
+        AKT_POS -= 1;
+      }
+      else if ZIEL_POS > AKT_POS {
+        step_out(PATTERN_POS);
+        if PATTERN_POS > 0 {PATTERN_POS -= 1;}
+        else {PATTERN_POS = 7;}
+        AKT_POS += 1;
+      }
+    }
+  }
 }
