@@ -11,22 +11,30 @@ cortex-m-rt = "0.6.15"
 version = "0.13.0"
 features = ["stm32f446", "rt"]
 
-# this lets you use `cargo fix`!
-[[bin]]
-name = "rust_embedded_starter"
-test = false
-bench = false
-
 [profile.release]
 codegen-units = 1 # longer build times but better optimizations
 debug = true      # enable debug symbols in release as they don't increase the size on flash
 lto = true        # enable link time optimizations for better performance
 
+[[bin]]
+name = "rust_embedded_starter"
+test = false
+bench = false
+
 [[example]]
 name = "mct_1_lauflicht"
+crate-type = ["bin"]
+test = false
+bench = false
 
 [[example]]
 name = "mct_2_uart"
+crate-type = ["bin"]
+test = false
+bench = false
 
 [[example]]
 name = "mct_3_stepper"
+crate-type = ["bin"]
+test = false
+bench = false

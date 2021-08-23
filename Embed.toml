@@ -5,7 +5,6 @@
 protocol = "Swd"
 # speed = 1337
 
-
 [default.general]
 chip = "stm32f446re"
 chip_descriptions = []
@@ -13,18 +12,15 @@ chip_descriptions = []
 log_level = "WARN"
 connect_under_reset = false
 
-
 [default.flashing]
 enabled = true
 restore_unwritten_bytes = false
 do_chip_erase = false
 # flash_layout_output_path = "out.svg"
 
-
 [default.reset]
 enabled = true
 halt_afterwards = false
-
 
 [default.rtt]
 enabled = true
@@ -40,7 +36,6 @@ timeout = 3000
 show_timestamps = true
 log_enabled = false
 log_path = "./logs"
-
 
 [default.gdb]
 enabled = false
