@@ -1,26 +1,17 @@
 #![no_std]
 #![no_main]
 
-use rustuino::{entry, gpio::*};
+use rustuino::*;
 
 #[entry]
 fn main() -> ! {
-  let mut pin = PB1::get_as_output();
 
-  set_value(&mut pin, true);
-  set_speed(&mut pin, rustuino::Speed::Low);
-
-	let pin = into_input(pin);
-
-  let _value = read_value(&pin);
-
-  // Cannot write to input pin!
-  // set_value(&mut pin, true);
-
-  let mut pin = into_output(pin);
+  let pin = pinmode_output(A5).unwrap();
 
   loop {
-    set_value(&mut pin, false);
-    set_value(&mut pin, true);
+    digital_write(&pin, true);
+    delay(1000);
+    digital_write(&pin, false);
+    delay(1000);
   }
 }

@@ -1,15 +1,11 @@
 [package]
 name = "rust_embedded_starter"
 version = "0.1.0"
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 rustuino = { git = "https://github.com/SebastianBraun01/rustuino", branch = "master" }
-cortex-m-rt = "0.6.15"
-
-[dependencies.stm32f4]
-version = "0.13.0"
-features = ["stm32f446", "rt"]
+cortex-m-rt = "0.7.1"
 
 [profile.release]
 codegen-units = 1 # longer build times but better optimizations
@@ -21,20 +17,20 @@ name = "rust_embedded_starter"
 test = false
 bench = false
 
+[[bin]]
+name = "libtest"
+path = "src/libtest.rs"
+test = false
+bench = false
+
 [[example]]
-name = "mct_1_lauflicht"
+name = "lights_reg"
 crate-type = ["bin"]
 test = false
 bench = false
 
 [[example]]
-name = "mct_2_uart"
-crate-type = ["bin"]
-test = false
-bench = false
-
-[[example]]
-name = "mct_3_stepper"
+name = "uart_lib"
 crate-type = ["bin"]
 test = false
 bench = false
