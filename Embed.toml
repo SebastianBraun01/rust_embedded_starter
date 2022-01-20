@@ -23,7 +23,7 @@ enabled = true
 halt_afterwards = false
 
 [default.rtt]
-enabled = true
+enabled = false
 channels = [
     # { up = 0, down = 0, name = "name", format = "String" },
 

@@ -1,5 +1,6 @@
 [package]
-name = "rust_embedded_starter"
+name = "{{project-name}}"
+authors = ["{{authors}}"]
 version = "0.1.0"
 edition = "2021"
 
@@ -13,7 +14,7 @@ debug = true      # enable debug symbols in release as they don't increase the s
 lto = true        # enable link time optimizations for better performance
 
 [[bin]]
-name = "rust_embedded_starter"
+name = "{{crate_name}}"
 test = false
 bench = false
 
