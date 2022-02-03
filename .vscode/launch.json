@@ -2,20 +2,20 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug (OpenOCD)",
-            "type": "cortex-debug",
+            "name": "Probe.rs Debug",
+            "type": "probe-rs-debug",
             "request": "launch",
             "cwd": "${workspaceRoot}",
-            "preLaunchTask": "Cargo Build",
-            "servertype": "openocd",
-            "runToMain": true,
-            "executable": "./target/thumbv7em-none-eabi/debug/rustuino",
-            "svdFile": "${workspaceRoot}/.vscode/STM32F446.svd",
-            "device": "stm32f446",
-            "configFiles": [
-                "interface/stlink-v2-1.cfg",
-                "target/stm32f4x.cfg"
+            "program_binary": "target/thumbv7em-none-eabi/debug/rust_embedded_starter",
+            "chip": "stm32f446re",
+            "connect_under_reset": true,
+            "runtimeExecutable": "probe-rs-debugger",
+            "runtimeArgs": [
+                "debug",
+                "--dap"
             ],
+            "flashing_enabled": true,
+            "reset_after_flashing": true,
         }
     ]
 }

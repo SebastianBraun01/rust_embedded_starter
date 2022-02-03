@@ -5,7 +5,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-rustuino = { git = "https://github.com/SebastianBraun01/rustuino", branch = "master" }
+rustuino = "0.1.0"
 cortex-m-rt = "0.7.1"
 
 [profile.release]
@@ -15,12 +15,6 @@ lto = true        # enable link time optimizations for better performance
 
 [[bin]]
 name = "{{crate_name}}"
-test = false
-bench = false
-
-[[bin]]
-name = "libtest"
-path = "src/libtest.rs"
 test = false
 bench = false
 

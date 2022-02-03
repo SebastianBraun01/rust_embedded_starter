@@ -2,27 +2,24 @@
   "version": "2.0.0",
   "tasks": [
         {
-            "label": "cargo: build",
-            "type": "cargo",
-            "command": "build",
-            "problemMatcher": ["$rustc"],
+            "label": "Cargo: build",
+            "type": "shell",
+            "command": "cargo build --release",
+            "group": "build"
+        },
+        {
+            "label": "Cargo: flash",
+            "type": "shell",
+            "command": "cargo embed --release",
             "group": {
                 "kind": "build",
                 "isDefault": true
             }
         },
         {
-            "label": "cargo: flash",
-            "type": "cargo",
-            "command": "embed",
-            "problemMatcher": ["$rustc"],
-            "group": "build"
-        },
-        {
-            "label": "cargo: clean",
-            "type": "cargo",
-            "command": "clean",
-            "problemMatcher": ["$rustc"],
+            "label": "Cargo: clean",
+            "type": "shell",
+            "command": "cargo clean",
             "group": "build"
         }
     ]
